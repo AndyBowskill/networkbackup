@@ -1,0 +1,10 @@
+{
+    "networkdevices": [
+      {
+        "type": "cisco",
+        "username": "andybowskill",
+        "password": "cisco",
+        "ipv4": "192.168.48.2:22"
+      }
+    ]
+  }

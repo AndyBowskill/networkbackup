@@ -1,54 +1,44 @@
 package main
 
 import (
+	"encoding/json"
+	"io"
 	"log"
 	"os"
-	"time"
-
-	"golang.org/x/crypto/ssh"
 )
 
 func main() {
 
-	sshConfig := &ssh.ClientConfig{
-		User: "andybowskill",
-		Auth: []ssh.AuthMethod{ssh.Password("cisco")},
-	}
-	sshConfig.HostKeyCallback = ssh.InsecureIgnoreHostKey()
+	var nds NetworkDevices
 
-	client, err := ssh.Dial("tcp", "192.168.48.2:22", sshConfig)
+	readJSONFile(&nds)
+
+	for i := 0; i < len(nds.NetworkDevices); i++ {
+
+		nd := nds.NetworkDevices[i]
+
+		switch nd.Type {
+		case cisco:
+			sshToCisco(nd.Username, nd.Password, nd.IPv4)
+
+		default:
+			// Other vendors are not implemented yet
+		}
+	}
+}
+
+func readJSONFile(nds *NetworkDevices) {
+
+	jsonFile, err := os.Open("networkbackup.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer jsonFile.Close()
+
+	bytes, err := io.ReadAll(jsonFile)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	session, err := client.NewSession()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer client.Close()
-
-	stdin, err := session.StdinPipe()
-	if err != nil {
-		log.Fatal(err)
-	}
-	session.Stdout = os.Stdout
-	session.Stderr = os.Stderr
-
-	err = session.Shell()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	stdin.Write([]byte("enable\n"))
-	stdin.Write([]byte("cisco\n"))
-
-	// Terminal length is 0 because we want to show all the options in one page
-	stdin.Write([]byte("terminal length 0\n"))
-
-	stdin.Write([]byte("show run brief\n"))
-	time.Sleep(1 * time.Second)
-
-	// Reverse the terminal length we temporarily modified
-	stdin.Write([]byte("terminal no length 0\n"))
-
+	json.Unmarshal(bytes, &nds)
 }
