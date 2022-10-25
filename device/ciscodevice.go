@@ -1,9 +1,10 @@
-package main
+package device
 
 import (
+	"bufio"
+	"io"
 	"log"
 	"os"
-	"time"
 
 	"golang.org/x/crypto/ssh"
 )
@@ -33,7 +34,12 @@ func sshToCisco(username, password, ipv4 string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	session.Stdout = os.Stdout
+
+	stdout, err := session.StdoutPipe()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	session.Stderr = os.Stderr
 
 	err = session.Shell()
@@ -41,15 +47,35 @@ func sshToCisco(username, password, ipv4 string) {
 		log.Fatal(err)
 	}
 
+	userHomeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	backupFile, err := os.Create(userHomeDir + "/cisco.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer backupFile.Close()
+
+	writer := bufio.NewWriter(backupFile)
+	defer writer.Flush()
+
 	stdin.Write([]byte("enable\n"))
 	stdin.Write([]byte(password + "\n"))
 
 	// Terminal length is 0 because we want to show all the options in one page
 	stdin.Write([]byte("terminal length 0\n"))
 
+	// show running-config brief
 	stdin.Write([]byte("show run brief\n"))
-	time.Sleep(1 * time.Minute)
 
 	// Reverse the terminal length we temporarily modified
 	stdin.Write([]byte("terminal no length 0\n"))
+
+	stdin.Write([]byte("exit\n"))
+
+	go io.Copy(writer, stdout)
+	session.Wait()
+
 }
