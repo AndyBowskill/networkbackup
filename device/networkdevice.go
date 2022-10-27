@@ -30,7 +30,7 @@ func BackupNetwork() {
 
 		switch nd.Type {
 		case cisco:
-			sshToCisco(nd.Username, nd.Password, nd.IPv4)
+			backupSSHToCisco(nd.Username, nd.Password, nd.IPv4)
 
 		default:
 			// Other vendors are not implemented yet
