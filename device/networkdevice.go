@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+type BackupNetworkDevice func(nd NetworkDevice)
+
 type NetworkDevices struct {
 	NetworkDevices []NetworkDevice `json:"networkdevices"`
 }
@@ -18,38 +20,32 @@ type NetworkDevice struct {
 	IPv4     string `json:"ipv4"`
 }
 
-func BackupNetwork() {
+func Backup() {
 
 	var nds NetworkDevices
 
-	readNetworkDeviceFile(&nds)
-
-	for i := 0; i < len(nds.NetworkDevices); i++ {
-
-		nd := nds.NetworkDevices[i]
-
-		switch nd.Type {
-		case cisco:
-			sshToCisco(nd.Username, nd.Password, nd.IPv4)
-
-		default:
-			// Other vendors are not implemented yet
-		}
+	backupNetworkCisco := func(nd NetworkDevice) {
+		backupSSHToCisco(nd.Username, nd.Password, nd.IPv4)
 	}
+
+	getConfig(&nds, "networkbackup.json")
+
+	backupNetwork(&nds, backupNetworkCisco)
 
 }
 
-func readNetworkDeviceFile(nds *NetworkDevices) {
+func getConfig(nds *NetworkDevices, backupFile string) {
 
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	jsonFile, err := os.Open(userHomeDir + "/networkbackup.json")
+	jsonFile, err := os.Open(userHomeDir + "/" + backupFile)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer jsonFile.Close()
 
 	bytes, err := io.ReadAll(jsonFile)
@@ -58,4 +54,20 @@ func readNetworkDeviceFile(nds *NetworkDevices) {
 	}
 
 	json.Unmarshal(bytes, &nds)
+}
+
+func backupNetwork(nds *NetworkDevices, backupNetworkCisco BackupNetworkDevice) {
+
+	for i := 0; i < len(nds.NetworkDevices); i++ {
+
+		nd := nds.NetworkDevices[i]
+
+		switch nd.Type {
+		case cisco:
+			backupNetworkCisco(nd)
+
+		default:
+			// Other vendors are not implemented yet
+		}
+	}
 }

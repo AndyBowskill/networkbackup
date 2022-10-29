@@ -11,7 +11,7 @@ import (
 
 const cisco string = "cisco"
 
-func sshToCisco(username, password, ipv4 string) {
+func backupSSHToCisco(username, password, ipv4 string) {
 
 	sshConfig := &ssh.ClientConfig{
 		User: username,
@@ -61,6 +61,15 @@ func sshToCisco(username, password, ipv4 string) {
 	writer := bufio.NewWriter(backupFile)
 	defer writer.Flush()
 
+	backupCiscoCmds(stdin, password)
+
+	go io.Copy(writer, stdout)
+	session.Wait()
+
+}
+
+func backupCiscoCmds(stdin io.Writer, password string) {
+
 	stdin.Write([]byte("enable\n"))
 	stdin.Write([]byte(password + "\n"))
 
@@ -74,8 +83,5 @@ func sshToCisco(username, password, ipv4 string) {
 	stdin.Write([]byte("terminal no length 0\n"))
 
 	stdin.Write([]byte("exit\n"))
-
-	go io.Copy(writer, stdout)
-	session.Wait()
 
 }
