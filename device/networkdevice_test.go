@@ -23,3 +23,22 @@ func TestBackupNetworkValidArgs(t *testing.T) {
 		t.Errorf("backupNetworkDevice function didn't contain one NetworkDevice element only")
 	}
 }
+
+func TestBackupNetworkInvalidArgs(t *testing.T) {
+
+	var nds NetworkDevices
+
+	bytes := []byte("\n{\n\t\"networkdevices\": [")
+	json.Unmarshal(bytes, &nds)
+
+	backupToCisco := func(nd NetworkDevice) {}
+
+	backupNetwork(&nds, backupToCisco)
+
+	got := len(nds.NetworkDevices)
+	want := 0
+
+	if got != want {
+		t.Errorf("backupNetworkDevice function didn't contain zero NetworkDevice element only")
+	}
+}
