@@ -5,7 +5,6 @@
 
 A command line tool to backup your network devices into a backup text file.
 
-
 ### Install
 
 ```
@@ -15,7 +14,6 @@ $ go install github.com/AndyBowskill/networkbackup@latest
 ### Example 
 
 An example ```networkbackup.json``` file in your home directory:
-
 
 ```
 {
@@ -27,6 +25,7 @@ An example ```networkbackup.json``` file in your home directory:
 	}]
 }
 ```
+
 At the moment:
 1. Your networkbackup.json file should be in your home directory.
     1. For example, on a macOS is ```Root``` > ```Users``` > ```johnsmith``` directory.
