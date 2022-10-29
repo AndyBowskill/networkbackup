@@ -20,7 +20,7 @@ func TestBackupNetworkValidArgs(t *testing.T) {
 	want := 1
 
 	if got != want {
-		t.Errorf("backupNetworkDevice function didn't contain one NetworkDevice element only")
+		t.Errorf("Expected NetworkDevice element of %d isn't the same actual of %d", got, want)
 	}
 }
 
@@ -39,6 +39,6 @@ func TestBackupNetworkInvalidArgs(t *testing.T) {
 	want := 0
 
 	if got != want {
-		t.Errorf("backupNetworkDevice function didn't contain zero NetworkDevice element only")
+		t.Errorf("Expected NetworkDevice element of %d isn't the same actual of %d", got, want)
 	}
 }

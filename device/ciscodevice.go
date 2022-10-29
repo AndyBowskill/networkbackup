@@ -11,7 +11,7 @@ import (
 
 const cisco string = "cisco"
 
-func backupSSHToCisco(username, password, ipv4 string) error {
+func backupSSHToCisco(username, password, ipv4 string) {
 
 	sshConfig := &ssh.ClientConfig{
 		User: username,
@@ -65,8 +65,6 @@ func backupSSHToCisco(username, password, ipv4 string) error {
 
 	go io.Copy(writer, stdout)
 	session.Wait()
-
-	return err
 
 }
 
