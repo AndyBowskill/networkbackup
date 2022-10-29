@@ -7,14 +7,14 @@ import (
 	"testing"
 )
 
-func Test(t *testing.T) {
+func TestBackupCiscoCmds(t *testing.T) {
 
 	var b = new(bytes.Buffer)
 	var in io.Writer = b
 	password := "12345"
 	showrunCmd := "show run brief"
 
-	backupCisco(in, password)
+	backupCiscoCmds(in, password)
 
 	got := b.String()
 
