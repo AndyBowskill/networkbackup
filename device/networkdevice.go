@@ -3,7 +3,6 @@ package device
 import (
 	"encoding/json"
 	"io"
-	"log"
 	"os"
 )
 
@@ -20,38 +19,29 @@ type NetworkDevice struct {
 	IPv4     string `json:"ipv4"`
 }
 
-func Backup() {
+func Backup(backupDir string) {
 
 	var nds NetworkDevices
 
 	backupNetworkCisco := func(nd NetworkDevice) {
-		backupSSHToCisco(nd.Username, nd.Password, nd.IPv4)
+		backupSSHToCisco(backupDir, nd.Username, nd.Password, nd.IPv4)
 	}
 
-	getConfig(&nds, "networkbackup.json")
+	getConfig(&nds, backupDir)
 
 	backupNetwork(&nds, backupNetworkCisco)
 
 }
 
-func getConfig(nds *NetworkDevices, backupFile string) {
+func getConfig(nds *NetworkDevices, backupDir string) {
 
-	userHomeDir, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	jsonFile, err := os.Open(userHomeDir + "/" + backupFile)
-	if err != nil {
-		log.Fatal(err)
-	}
+	jsonFile, err := os.Open(backupDir + "/networkbackup.json")
+	errorCheck(err)
 
 	defer jsonFile.Close()
 
 	bytes, err := io.ReadAll(jsonFile)
-	if err != nil {
-		log.Fatal(err)
-	}
+	errorCheck(err)
 
 	json.Unmarshal(bytes, &nds)
 }
