@@ -3,7 +3,6 @@ package device
 import (
 	"bufio"
 	"io"
-	"log"
 	"os"
 
 	"golang.org/x/crypto/ssh"
@@ -11,7 +10,7 @@ import (
 
 const cisco string = "cisco"
 
-func backupSSHToCisco(username, password, ipv4 string) {
+func backupSSHToCisco(backupDir, username, password, ipv4 string) {
 
 	sshConfig := &ssh.ClientConfig{
 		User: username,
@@ -20,42 +19,25 @@ func backupSSHToCisco(username, password, ipv4 string) {
 	sshConfig.HostKeyCallback = ssh.InsecureIgnoreHostKey()
 
 	client, err := ssh.Dial("tcp", ipv4, sshConfig)
-	if err != nil {
-		log.Fatal(err)
-	}
+	errorCheck(err)
 
 	session, err := client.NewSession()
-	if err != nil {
-		log.Fatal(err)
-	}
+	errorCheck(err)
 	defer client.Close()
 
 	stdin, err := session.StdinPipe()
-	if err != nil {
-		log.Fatal(err)
-	}
+	errorCheck(err)
 
 	stdout, err := session.StdoutPipe()
-	if err != nil {
-		log.Fatal(err)
-	}
+	errorCheck(err)
 
 	session.Stderr = os.Stderr
 
 	err = session.Shell()
-	if err != nil {
-		log.Fatal(err)
-	}
+	errorCheck(err)
 
-	userHomeDir, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	backupFile, err := os.Create(userHomeDir + "/cisco.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
+	backupFile, err := os.Create(backupDir + "/cisco-" + currentDateTimeAsString())
+	errorCheck(err)
 	defer backupFile.Close()
 
 	writer := bufio.NewWriter(backupFile)
