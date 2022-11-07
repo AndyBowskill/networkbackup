@@ -27,15 +27,18 @@ func Backup(backupDir string) {
 		backupSSHToCisco(backupDir, nd.Username, nd.Password, nd.IPv4)
 	}
 
-	getConfig(&nds, backupDir)
+	getConfig(&nds)
 
 	backupNetwork(&nds, backupNetworkCisco)
 
 }
 
-func getConfig(nds *NetworkDevices, backupDir string) {
+func getConfig(nds *NetworkDevices) {
 
-	jsonFile, err := os.Open(backupDir + "/networkbackup.json")
+	userHomeDir, err := os.UserHomeDir()
+	errorCheck(err)
+
+	jsonFile, err := os.Open(userHomeDir + "/networkbackup.json")
 	errorCheck(err)
 
 	defer jsonFile.Close()
