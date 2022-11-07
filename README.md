@@ -29,4 +29,6 @@ An example ```networkbackup.json``` file in your home directory:
 At the moment:
 1. Your networkbackup.json file should be in your home directory.
     1. For example, on a macOS is ```Root``` > ```Users``` > ```johnsmith``` directory.
-1. The ```cisco.txt``` backup file will be in your home directory after the tool has been run as well.
+1. The backup file will be in your networkbackup directory after the tool has been run.
+	1. For example, on a macOS is ```Root``` > ```Users``` > ```johnsmith``` > ```networkbackup``` > ```cisco-2022-November-7-15-55```. The tool checks if the ```networkbackup``` directory is there. If not, the tool creates the directory automatically and place the backup files inside.
+1. The tool only deals with Cisco devices. Other vendors are not implemented yet. If you are interested in this tool, please contribute!
