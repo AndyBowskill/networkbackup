@@ -2,6 +2,8 @@ module github.com/AndyBowskill/networkbackup
 
 go 1.19
 
+require gopkg.in/yaml.v2 v2.4.0
+
 require golang.org/x/term v0.0.0-20220722155259-a9ba230a4035 // indirect
 
 require (
