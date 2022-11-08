@@ -20,7 +20,7 @@ func main() {
 		errorCheck(err)
 	}
 
-	device.Backup(backupDir)
+	device.Backup(userHomeDir, backupDir)
 }
 
 func errorCheck(err error) {

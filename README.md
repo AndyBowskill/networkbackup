@@ -13,22 +13,23 @@ $ go install github.com/AndyBowskill/networkbackup@latest
 
 ### Example 
 
-An example ```networkbackup.json``` file in your home directory:
+An example ```networkbackup.yaml``` file in your home directory:
 
 ```
-{
-	"networkdevices": [{
-		"type": "cisco",
-		"username": "johnsmith",
-		"password": "password123",
-		"ipv4": "192.168.0.2:22"
-	}]
-}
+networkdevices:
+  - type: cisco
+    username: johnsmith
+    password: password123
+    ipv4: '192.168.0.2:22'
+  - type: cisco
+    username: admin
+    password: pass456
+    ipv4: '192.168.0.1:22'
 ```
 
 At the moment:
-1. Your networkbackup.json file should be in your home directory.
+1. Your networkbackup.yaml file should be in your home directory.
     1. For example, on a macOS is ```Root``` > ```Users``` > ```johnsmith``` directory.
 1. The backup file will be in your networkbackup directory after the tool has been run.
-	1. For example, on a macOS is ```Root``` > ```Users``` > ```johnsmith``` > ```networkbackup``` > ```cisco-2022-November-7-15-55```. The tool checks if the ```networkbackup``` directory is there. If not, the tool creates the directory automatically and place the backup files inside.
+	1. For example, on a macOS is ```Root``` > ```Users``` > ```johnsmith``` > ```networkbackup``` > ```cisco-2022-November-7-15-55```. The tool checks if the ```networkbackup``` directory is there. If not, the tool creates the directory automatically and place the backup file(s) inside.
 1. The tool only deals with Cisco devices. Other vendors are not implemented yet. If you are interested in this tool, please contribute!
