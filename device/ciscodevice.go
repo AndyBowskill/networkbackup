@@ -36,7 +36,7 @@ func backupSSHToCisco(backupDir, username, password, ipv4 string) {
 	err = session.Shell()
 	errorCheck(err)
 
-	backupFile, err := os.Create(backupDir + "/cisco-" + currentDateTimeAsString())
+	backupFile, err := os.Create(backupDir + "/" + cisco + "-" + currentDateTimeAsString())
 	errorCheck(err)
 	defer backupFile.Close()
 
@@ -58,7 +58,6 @@ func backupCiscoCmds(stdin io.Writer, password string) {
 	// Terminal length is 0 because we want to show all the options in one page
 	stdin.Write([]byte("terminal length 0\n"))
 
-	// show running-config brief
 	stdin.Write([]byte("show run brief\n"))
 
 	// Reverse the terminal length we temporarily modified

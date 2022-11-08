@@ -1,25 +1,26 @@
 package device
 
 import (
-	"encoding/json"
 	"io"
 	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 type BackupNetworkDevice func(nd NetworkDevice)
 
 type NetworkDevices struct {
-	NetworkDevices []NetworkDevice `json:"networkdevices"`
+	NetworkDevices []NetworkDevice `yaml:"networkdevices"`
 }
 
 type NetworkDevice struct {
-	Type     string `json:"type"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	IPv4     string `json:"ipv4"`
+	Type     string `yaml:"type"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+	IPv4     string `yaml:"ipv4"`
 }
 
-func Backup(backupDir string) {
+func Backup(userHomeDir, backupDir string) {
 
 	var nds NetworkDevices
 
@@ -27,26 +28,21 @@ func Backup(backupDir string) {
 		backupSSHToCisco(backupDir, nd.Username, nd.Password, nd.IPv4)
 	}
 
-	getConfig(&nds)
+	getConfig(userHomeDir, &nds)
 
 	backupNetwork(&nds, backupNetworkCisco)
-
 }
 
-func getConfig(nds *NetworkDevices) {
+func getConfig(userHomeDir string, nds *NetworkDevices) {
 
-	userHomeDir, err := os.UserHomeDir()
+	configFile, err := os.Open(userHomeDir + "/networkbackup.yaml")
+	errorCheck(err)
+	defer configFile.Close()
+
+	bytes, err := io.ReadAll(configFile)
 	errorCheck(err)
 
-	jsonFile, err := os.Open(userHomeDir + "/networkbackup.json")
-	errorCheck(err)
-
-	defer jsonFile.Close()
-
-	bytes, err := io.ReadAll(jsonFile)
-	errorCheck(err)
-
-	json.Unmarshal(bytes, &nds)
+	yaml.Unmarshal(bytes, &nds)
 }
 
 func backupNetwork(nds *NetworkDevices, backupNetworkCisco BackupNetworkDevice) {

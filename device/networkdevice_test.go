@@ -1,16 +1,17 @@
 package device
 
 import (
-	"encoding/json"
 	"testing"
+
+	"gopkg.in/yaml.v2"
 )
 
 func TestBackupNetworkValidArgs(t *testing.T) {
 
 	var nds NetworkDevices
 
-	bytes := []byte("\n{\n\t\"networkdevices\": [{\n\t\t\"type\": \"cisco\",\n\t\t\"username\": \"andybowskill\",\n\t\t\"password\": \"cisco\",\n\t\t\"ipv4\": \"192.168.48.2:22\"\n\t}]\n}")
-	json.Unmarshal(bytes, &nds)
+	bytes := []byte("networkdevices:\r\n  - type: cisco\r\n    username: andybowskill\r\n    password: cisco\r\n    ipv4: '192.168.48.2:22'\r\n")
+	yaml.Unmarshal(bytes, &nds)
 
 	backupToCisco := func(nd NetworkDevice) {}
 
@@ -28,8 +29,8 @@ func TestBackupNetworkInvalidArgs(t *testing.T) {
 
 	var nds NetworkDevices
 
-	bytes := []byte("\n{\n\t\"networkdevices\": [")
-	json.Unmarshal(bytes, &nds)
+	bytes := []byte("networkdevices:")
+	yaml.Unmarshal(bytes, &nds)
 
 	backupToCisco := func(nd NetworkDevice) {}
 
