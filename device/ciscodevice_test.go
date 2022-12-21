@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestBackupCiscoCmds(t *testing.T) {
+func Test_backupCiscoCmds(t *testing.T) {
 
 	var b = new(bytes.Buffer)
 	var in io.Writer = b
